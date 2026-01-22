@@ -1,0 +1,7 @@
+{
+  "name": "Praveen & Krithiga Wedding Invitation",
+  "description": "A modern, mobile-first digital wedding invitation for Praveen Kumar & Krithiga featuring glassmorphism, interactive quiz, and RSVP.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
