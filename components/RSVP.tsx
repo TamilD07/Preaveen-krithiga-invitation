@@ -15,13 +15,18 @@ const RSVP: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const sendWhatsApp = () => {
-    // Format the message for WhatsApp
-    const groomPhone = "6384814479"; // Placeholder: Host should replace with actual number
-    const text = `*RSVP for Praveen & Krithiga Wedding*%0A%0A*Attending:* ${form.attendance.toUpperCase()}%0A*Side:* ${form.side.toUpperCase()}%0A*Guests:* ${form.guests}%0A*Wishes:* ${form.message || 'None'}`;
-    const waUrl = `https://wa.me/${groomPhone}?text=${text}`;
-    window.open(waUrl, '_blank');
-  };
+ const sendWhatsApp = () => {
+  const groomPhone = "9597303603";   // Praveen
+  const bridePhone = "6384814479";   // Krithiga (put real number here)
+
+  const receiverPhone = form.side === "bride" ? bridePhone : groomPhone;
+
+  const text = `*RSVP for Praveen & Krithiga Wedding*%0A%0A*Attending:* ${form.attendance.toUpperCase()}%0A*Side:* ${form.side.toUpperCase()}%0A*Guests:* ${form.guests}%0A*Wishes:* ${form.message || 'None'}`;
+
+  const waUrl = `https://wa.me/${receiverPhone}?text=${text}`;
+  window.open(waUrl, '_blank');
+};
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
