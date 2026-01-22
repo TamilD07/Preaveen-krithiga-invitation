@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion as motionBase } from 'framer-motion';
-import { Send, CheckCircle2, MessageCircle } from 'lucide-react';
+import { CheckCircle2, MessageCircle } from 'lucide-react';
 import { RSVPFormData } from '../types.ts';
 
 const motion = motionBase as any;
@@ -15,24 +15,31 @@ const RSVP: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
- const sendWhatsApp = () => {
-  const groomPhone = "9597303603";   // Praveen
-  const bridePhone = "6384814479";   // Krithiga (put real number here)
+  const sendWhatsApp = () => {
+    const groomPhone = "9597303603";    // Praveen
+    const bridePhone = "6384814479";    // Krithiga
 
-  const receiverPhone = form.side === "bride" ? bridePhone : groomPhone;
+    const text = `*RSVP for Praveen & Krithiga Wedding*%0A%0A*Attending:* ${form.attendance.toUpperCase()}%0A*Side:* ${form.side.toUpperCase()}%0A*Guests:* ${form.guests}%0A*Wishes:* ${form.message || 'None'}`;
 
-  const text = `*RSVP for Praveen & Krithiga Wedding*%0A%0A*Attending:* ${form.attendance.toUpperCase()}%0A*Side:* ${form.side.toUpperCase()}%0A*Guests:* ${form.guests}%0A*Wishes:* ${form.message || 'None'}`;
+    const sendTo = (phone: string) => {
+      const waUrl = `https://wa.me/${phone}?text=${text}`;
+      window.open(waUrl, "_blank");
+    };
 
-  const waUrl = `https://wa.me/${receiverPhone}?text=${text}`;
-  window.open(waUrl, '_blank');
-};
-
+    if (form.side === "groom") {
+      sendTo(groomPhone);
+    } else if (form.side === "bride") {
+      sendTo(bridePhone);
+    } else {
+      sendTo(groomPhone);
+      setTimeout(() => sendTo(bridePhone), 600);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate a brief loading state
+
     setTimeout(() => {
       setIsSubmitting(false);
       setSubmitted(true);
@@ -42,7 +49,7 @@ const RSVP: React.FC = () => {
 
   if (submitted) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         className="max-w-xl mx-auto glass p-8 md:p-12 rounded-[40px] text-center shadow-xl border border-white/60 mx-4"
@@ -54,7 +61,7 @@ const RSVP: React.FC = () => {
         <p className="text-gray-500 mb-8 font-serif italic">"Your blessings mean a lot to us!"</p>
         <div className="space-y-4">
           <p className="text-[10px] text-gray-400 uppercase tracking-widest font-medium">Opening WhatsApp for confirmation...</p>
-          <button 
+          <button
             onClick={() => setSubmitted(false)}
             className="text-[#B0727B] text-[10px] font-bold uppercase tracking-widest hover:opacity-70 transition-opacity"
           >
@@ -83,9 +90,9 @@ const RSVP: React.FC = () => {
                 type="button"
                 onClick={() => setForm({ ...form, attendance: opt })}
                 className={`flex-1 py-3 px-4 rounded-2xl text-[10px] font-bold tracking-widest uppercase transition-all duration-300 ${
-                  form.attendance === opt 
-                  ? 'bg-[#B0727B] text-white shadow-lg shadow-[#B0727B]/10 border-[#B0727B]' 
-                  : 'bg-white/50 text-gray-500 hover:bg-white border-white/40'
+                  form.attendance === opt
+                    ? 'bg-[#B0727B] text-white shadow-lg shadow-[#B0727B]/10 border-[#B0727B]'
+                    : 'bg-white/50 text-gray-500 hover:bg-white border-white/40'
                 } border`}
               >
                 {opt}
@@ -97,18 +104,17 @@ const RSVP: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-3">
             <label className="text-[9px] uppercase tracking-widest text-gray-400 font-bold ml-2">Which side?</label>
-            <div className="relative">
-              <select
-                value={form.side}
-                onChange={(e) => setForm({ ...form, side: e.target.value as any })}
-                className="w-full bg-white/50 border border-white/40 focus:border-[#B0727B]/20 rounded-2xl py-3 px-4 text-xs outline-none transition-all appearance-none text-gray-600 font-medium"
-              >
-                <option value="groom">Groom's Side</option>
-                <option value="bride">Bride's Side</option>
-                <option value="friend">Mutual Friend</option>
-              </select>
-            </div>
+            <select
+              value={form.side}
+              onChange={(e) => setForm({ ...form, side: e.target.value as any })}
+              className="w-full bg-white/50 border border-white/40 focus:border-[#B0727B]/20 rounded-2xl py-3 px-4 text-xs outline-none transition-all appearance-none text-gray-600 font-medium"
+            >
+              <option value="groom">Groom's Side</option>
+              <option value="bride">Bride's Side</option>
+              <option value="friend">Mutual Friend</option>
+            </select>
           </div>
+
           <div className="space-y-3">
             <label className="text-[9px] uppercase tracking-widest text-gray-400 font-bold ml-2">Guests count</label>
             <input
@@ -138,9 +144,7 @@ const RSVP: React.FC = () => {
           disabled={isSubmitting}
           className={`w-full bg-[#B0727B] text-white py-4 rounded-2xl font-bold tracking-widest uppercase text-[10px] flex items-center justify-center gap-3 transition-all shadow-lg active:scale-95 ${isSubmitting ? 'opacity-70' : ''}`}
         >
-          {isSubmitting ? 'Confirming...' : (
-            <>Send Blessings <MessageCircle className="w-4 h-4" /></>
-          )}
+          {isSubmitting ? 'Confirming...' : <>Send Blessings <MessageCircle className="w-4 h-4" /></>}
         </button>
       </form>
     </div>
